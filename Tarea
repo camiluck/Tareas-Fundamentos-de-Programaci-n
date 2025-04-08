@@ -1,0 +1,172 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
+ */
+package tarea.pkg2;
+import java.util.Scanner;
+/**
+ *
+ * @author cami
+ */
+public class Tarea2 {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        
+        Scanner entrada = new Scanner(System.in);
+        
+        // Variables 
+        int opcion = 0;
+        boolean salir = false;
+        
+        // Matriz para los asientos del teatro
+        boolean[][] asientosOcupados = new boolean[3][3];
+        
+        // Precio de entrada
+        int precioBase = 3000; 
+        
+        // Menú principal
+        for(int i = 0; i < 100; i++) { 
+            
+            // Mostrar el menú
+            System.out.println("\n**** TEATRO MORO - SISTEMA DE VENTAS ****");
+            System.out.println("1. Comprar entrada");
+            System.out.println("2. Salir");
+            System.out.print("Ingrese una opción: ");
+            
+            try {
+                opcion = entrada.nextInt();
+                
+                // Validamos la opción ingresada
+                if(opcion == 1) {
+                    
+                    
+                    // Mostrar el plano del teatro
+                    System.out.println("\n-- PLANO DEL TEATRO --");
+                    System.out.println("  1 2 3");
+                    
+                    for(int fila = 0; fila < 3; fila++) {
+                        System.out.print((fila + 1) + " ");
+                        
+                        for(int asiento = 0; asiento < 3; asiento++) {
+                            if(asientosOcupados[fila][asiento]) {
+                                System.out.print("X ");
+                            } else {
+                                System.out.print("O ");
+                            }
+                        }
+                        System.out.println();
+                    }
+                    
+                    System.out.println("O = Disponible, X = Ocupado");
+                    
+                    // Pedir ubicación del asiento
+                    int filaSeleccionada = 0;
+                    int asientoSeleccionado = 0;
+                    boolean asientoValido = false;
+                    
+                    while(!asientoValido) {
+                        System.out.print("\nIngrese la fila (1-3): ");
+                        filaSeleccionada = entrada.nextInt();
+                        
+                        System.out.print("Ingrese el asiento (1-3): ");
+                        asientoSeleccionado = entrada.nextInt();
+                        
+                        // Validar si la ubicación es válida 
+                        if(filaSeleccionada >= 1 && filaSeleccionada <= 3 && 
+                           asientoSeleccionado >= 1 && asientoSeleccionado <= 3) {
+                            
+                            // Convertir a índices de matriz 
+                            if(asientosOcupados[filaSeleccionada-1][asientoSeleccionado-1]) {
+                                System.out.println("Este asiento ya está ocupado. Por favor elija otro.");
+                            } else {
+                                asientoValido = true;
+                            }
+                        } else {
+                            System.out.println("Fila o asiento no válido. Intente nuevamente.");
+                        }
+                    }
+                    
+                    // Pedir edad para aplicar descuento
+                    System.out.print("Ingrese su edad: ");
+                    int edad = entrada.nextInt();
+                    
+                    // Calcular descuento 
+                    double descuento = 0;
+                    String tipoCliente = "Normal";
+                    
+                    if(edad < 0 || edad > 120) {
+                        System.out.println("Edad no válida. Se cobrará tarifa normal.");
+                    } else if(edad >= 65) {
+                        // Tercera edad (15%)
+                        descuento = 0.15;
+                        tipoCliente = "Tercera edad";
+                    } else if(edad >= 12 && edad <= 25) {
+                        // Estudiante (10%)
+                        descuento = 0.10;
+                        tipoCliente = "Estudiante";
+                    }
+                    
+                    // Calcular precio final 
+                    double precioFinal = precioBase;
+                    double descuentoTotal = precioBase * descuento;
+                    int contador = 0;
+                    
+                    while(contador < 1) {
+                        precioFinal = precioBase - descuentoTotal;
+                        contador++;
+                    }
+                    
+                    // Marcar asiento como ocupado
+                    asientosOcupados[filaSeleccionada-1][asientoSeleccionado-1] = true;
+                    
+                    // Resumen de compra
+                    System.out.println("\n---- RESUMEN DE LA COMPRA ----");
+                    System.out.println("Ubicación: Fila " + filaSeleccionada + ", Asiento " + asientoSeleccionado);
+                    System.out.println("Tipo de cliente: " + tipoCliente);
+                    System.out.println("Precio base: $" + precioBase);
+                    System.out.println("Descuento aplicado: $" + descuentoTotal);
+                    System.out.println("Precio final: $" + precioFinal);
+                    
+                    // Preguntar si desea hacer otra compra 
+                    System.out.print("\n¿Desea realizar otra compra? (1: Sí / 2: No): ");
+                    int otraCompra = entrada.nextInt();
+                    
+                    if(otraCompra == 2) {
+                        System.out.println("Gracias por su compra. ¡Hasta pronto!");
+                        salir = true;
+                        break; 
+                    }
+                    
+                } else if(opcion == 2) {
+                    System.out.println("¡Gracias por usar el sistema de Teatro Moro!");
+                    salir = true;
+                    break; 
+                } else {
+                    System.out.println("Opción no válida. Por favor intente nuevamente.");
+                }
+                
+            } catch(Exception e) {
+                System.out.println("Error: Debe ingresar un número válido.");
+                entrada.nextLine(); 
+            }
+            
+            if(salir) {
+                break;
+            }
+        }
+        
+        entrada.close();
+    }
+}
+        
+        
+        
+        
+        
+    }
+    
+}
