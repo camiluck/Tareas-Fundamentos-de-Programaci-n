@@ -1,0 +1,515 @@
+import java.util.Scanner;
+
+/**
+ *
+ * @author cami
+ */
+public class Tarea5 {
+    // Variables estáticas
+    static int totalVentas = 0;
+    static double dineroTotal = 0.0;
+    static int contadorEstudiantes = 0;
+    
+    // Variables de instancia
+    String nombre;
+    int capacidad;
+    int disponibles;
+    double precioVip;
+    double precioPlatea;
+    double precioGeneral;
+    
+    // Arrays para guardar información
+    int[] numeros;
+    String[] ubicaciones;
+    String[] tipoClientes;
+    double[] precios;
+    
+    // Constructor
+    public Tarea5() {
+        nombre = "Teatro Moro";
+        capacidad = 100;
+        disponibles = 100;
+        precioVip = 30000;
+        precioPlatea = 20000;
+        precioGeneral = 10000;
+        
+        numeros = new int[100];
+        ubicaciones = new String[100];
+        tipoClientes = new String[100];
+        precios = new double[100];
+    }
+    
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // Crear un nuevo teatro
+        Tarea5 miTeatro = new Tarea5();
+        miTeatro.mostrarMenu();
+    }
+    
+    // Método para mostrar el menú principal
+    public void mostrarMenu() {
+        Scanner lector = new Scanner(System.in);
+        int opcion = 0;
+        boolean seguir = true;
+        
+        System.out.println("Bienvenido al Teatro " + nombre);
+        System.out.println("------------------------");
+        
+        while (seguir) {
+            System.out.println("\nMENU:");
+            System.out.println("1. Vender entrada");
+            System.out.println("2. Ver promociones");
+            System.out.println("3. Buscar entradas");
+            System.out.println("4. Eliminar entrada");
+            System.out.println("5. Ver estadísticas");
+            System.out.println("6. Salir");
+            System.out.print("Elige una opción: ");
+            
+            opcion = lector.nextInt();
+            lector.nextLine(); // Limpiar el buffer
+            
+            if (opcion == 1) {
+                venderEntrada(lector);
+            } else if (opcion == 2) {
+                mostrarPromociones(lector);
+            } else if (opcion == 3) {
+                buscarEntradas(lector);
+            } else if (opcion == 4) {
+                eliminarEntrada(lector);
+            } else if (opcion == 5) {
+                mostrarEstadisticas();
+            } else if (opcion == 6) {
+                seguir = false;
+                System.out.println("¡Gracias por usar nuestro sistema!");
+            } else {
+                System.out.println("Opción no válida, intenta de nuevo");
+            }
+        }
+    }
+    
+    // Método para vender entradas
+    public void venderEntrada(Scanner lector) {
+        // Variables locales para este método
+        int ubicacionElegida;
+        int tipoCliente;
+        double precio;
+        double descuento = 0;
+        
+        if (disponibles <= 0) {
+            System.out.println("Lo sentimos, no hay entradas disponibles");
+            return;
+        }
+        
+        System.out.println("\nTIPOS DE UBICACIÓN:");
+        System.out.println("1. VIP - $" + precioVip);
+        System.out.println("2. Platea - $" + precioPlatea);
+        System.out.println("3. General - $" + precioGeneral);
+        System.out.print("Elige una ubicación: ");
+        ubicacionElegida = lector.nextInt();
+        lector.nextLine();
+        
+        if (ubicacionElegida < 1 || ubicacionElegida > 3) {
+            System.out.println("Ubicación no válida");
+            return;
+        }
+        
+        // Determinar precio base
+        if (ubicacionElegida == 1) {
+            precio = precioVip;
+        } else if (ubicacionElegida == 2) {
+            precio = precioPlatea;
+        } else {
+            precio = precioGeneral;
+        }
+        
+        System.out.println("\nTIPO DE CLIENTE:");
+        System.out.println("1. Normal");
+        System.out.println("2. Estudiante (10% descuento)");
+        System.out.println("3. Tercera edad (15% descuento)");
+        System.out.print("Elige tipo de cliente: ");
+        tipoCliente = lector.nextInt();
+        lector.nextLine();
+        
+        if (tipoCliente < 1 || tipoCliente > 3) {
+            System.out.println("Tipo de cliente no válido");
+            return;
+        }
+        
+        // Calcular descuento
+        String tipoClienteTexto;
+        if (tipoCliente == 1) {
+            tipoClienteTexto = "Normal";
+            descuento = 0;
+        } else if (tipoCliente == 2) {
+            tipoClienteTexto = "Estudiante";
+            descuento = 0.1;  // 10%
+            contadorEstudiantes++;
+        } else {
+            tipoClienteTexto = "Tercera Edad";
+            descuento = 0.15; // 15%
+        }
+        
+        // Calcular precio final
+        double precioFinal = precio - (precio * descuento);
+        
+        // Guardar la entrada
+        numeros[totalVentas] = totalVentas + 1;
+        
+        if (ubicacionElegida == 1) {
+            ubicaciones[totalVentas] = "VIP";
+        } else if (ubicacionElegida == 2) {
+            ubicaciones[totalVentas] = "Platea";
+        } else {
+            ubicaciones[totalVentas] = "General";
+        }
+        
+        tipoClientes[totalVentas] = tipoClienteTexto;
+        precios[totalVentas] = precioFinal;
+        
+        // Actualizar contadores
+        totalVentas++;
+        disponibles--;
+        dineroTotal += precioFinal;
+        
+        // Mostrar resultado
+        System.out.println("\n¡Venta realizada!");
+        System.out.println("Número de entrada: " + totalVentas);
+        System.out.println("Ubicación: " + ubicaciones[totalVentas-1]);
+        System.out.println("Tipo de cliente: " + tipoClienteTexto);
+        if (descuento > 0) {
+            System.out.println("Descuento: " + (descuento * 100) + "%");
+        }
+        System.out.println("Precio final: $" + precioFinal);
+    }
+    
+    // Método para mostrar promociones
+    public void mostrarPromociones(Scanner lector) {
+        System.out.println("\nPROMOCIONES:");
+        System.out.println("1. 3x2 en entradas Generales");
+        System.out.println("2. 15% extra para estudiantes en entradas Platea");
+        System.out.println("3. 20% de descuento para grupos (5+ entradas VIP)");
+        System.out.print("Elige una promoción (0 para volver): ");
+        
+        int promocion = lector.nextInt();
+        lector.nextLine();
+        
+        if (promocion == 0) {
+            return;
+        }
+        
+        if (promocion == 1) {
+            // Promoción 3x2 en General
+            if (disponibles >= 3) {
+                System.out.println("\nPromoción 3x2 en General");
+                System.out.println("Normalmente: $" + (precioGeneral * 3));
+                System.out.println("Con promoción: $" + (precioGeneral * 2));
+                
+                System.out.print("¿Aplicar esta promoción? (1=Sí, 0=No): ");
+                int confirmar = lector.nextInt();
+                lector.nextLine();
+                
+                if (confirmar == 1) {
+                    // Registrar las 3 entradas
+                    for (int i = 0; i < 3; i++) {
+                        numeros[totalVentas] = totalVentas + 1;
+                        ubicaciones[totalVentas] = "General";
+                        tipoClientes[totalVentas] = "Normal (Promo 3x2)";
+                        if (i < 2) {
+                            precios[totalVentas] = precioGeneral;
+                        } else {
+                            precios[totalVentas] = 0; // La tercera es gratis
+                        }
+                        totalVentas++;
+                    }
+                    
+                    disponibles -= 3;
+                    dineroTotal += precioGeneral * 2;
+                    
+                    System.out.println("¡Promoción aplicada! 3 entradas al precio de 2");
+                }
+            } else {
+                System.out.println("No hay suficientes entradas disponibles");
+            }
+        } 
+        else if (promocion == 2) {
+            // Promoción para estudiantes
+            System.out.println("\nEsta promoción aplica un 15% extra para estudiantes");
+            System.out.println("Descuento total: 25% (10% estudiante + 15% extra)");
+            
+            if (disponibles >= 1) {
+                System.out.print("¿Aplicar esta promoción? (1=Sí, 0=No): ");
+                int confirmar = lector.nextInt();
+                lector.nextLine();
+                
+                if (confirmar == 1) {
+                    double precioNormal = precioPlatea;
+                    double precioFinal = precioPlatea * 0.75; // 25% descuento
+                    
+                    numeros[totalVentas] = totalVentas + 1;
+                    ubicaciones[totalVentas] = "Platea";
+                    tipoClientes[totalVentas] = "Estudiante (Promo 25%)";
+                    precios[totalVentas] = precioFinal;
+                    
+                    totalVentas++;
+                    disponibles--;
+                    dineroTotal += precioFinal;
+                    contadorEstudiantes++;
+                    
+                    System.out.println("¡Promoción aplicada!");
+                    System.out.println("Precio normal: $" + precioNormal);
+                    System.out.println("Precio con descuento: $" + precioFinal);
+                }
+            } else {
+                System.out.println("No hay entradas disponibles");
+            }
+        } 
+        else if (promocion == 3) {
+            // Promoción grupos
+            System.out.print("¿Cuántas entradas VIP quieres comprar? (mínimo 5): ");
+            int cantidad = lector.nextInt();
+            lector.nextLine();
+            
+            if (cantidad < 5) {
+                System.out.println("La promoción requiere mínimo 5 entradas");
+                return;
+            }
+            
+            if (disponibles < cantidad) {
+                System.out.println("No hay suficientes entradas disponibles");
+                return;
+            }
+            
+            double precioTotal = cantidad * precioVip * 0.8; // 20% de descuento
+            
+            System.out.println("Precio normal: $" + (cantidad * precioVip));
+            System.out.println("Precio con 20% descuento: $" + precioTotal);
+            
+            System.out.print("¿Aplicar esta promoción? (1=Sí, 0=No): ");
+            int confirmar = lector.nextInt();
+            lector.nextLine();
+            
+            if (confirmar == 1) {
+                for (int i = 0; i < cantidad; i++) {
+                    numeros[totalVentas] = totalVentas + 1;
+                    ubicaciones[totalVentas] = "VIP";
+                    tipoClientes[totalVentas] = "Normal (Promo Grupo)";
+                    precios[totalVentas] = precioVip * 0.8;
+                    
+                    totalVentas++;
+                }
+                
+                disponibles -= cantidad;
+                dineroTotal += precioTotal;
+                
+                System.out.println("¡Promoción aplicada!");
+                System.out.println("Se vendieron " + cantidad + " entradas VIP con 20% descuento");
+            }
+        } 
+        else {
+            System.out.println("Opción no válida");
+        }
+    }
+    
+    // Método para buscar entradas
+    public void buscarEntradas(Scanner lector) {
+        if (totalVentas == 0) {
+            System.out.println("No hay entradas vendidas todavía");
+            return;
+        }
+        
+        System.out.println("\nBÚSQUEDA DE ENTRADAS:");
+        System.out.println("1. Por número");
+        System.out.println("2. Por ubicación");
+        System.out.println("3. Por tipo de cliente");
+        System.out.print("Elige una opción: ");
+        
+        int opcion = lector.nextInt();
+        lector.nextLine();
+        
+        if (opcion == 1) {
+            // Buscar por número
+            System.out.print("Ingresa el número de entrada: ");
+            int numero = lector.nextInt();
+            lector.nextLine();
+            
+            boolean encontrado = false;
+            
+            for (int i = 0; i < totalVentas; i++) {
+                if (numeros[i] == numero) {
+                    System.out.println("\nEntrada encontrada:");
+                    System.out.println("Número: " + numeros[i]);
+                    System.out.println("Ubicación: " + ubicaciones[i]);
+                    System.out.println("Tipo de cliente: " + tipoClientes[i]);
+                    System.out.println("Precio: $" + precios[i]);
+                    encontrado = true;
+                    break;
+                }
+            }
+            
+            if (!encontrado) {
+                System.out.println("No se encontró ninguna entrada con ese número");
+            }
+        } 
+        else if (opcion == 2) {
+            // Buscar por ubicación
+            System.out.println("\nUbicaciones:");
+            System.out.println("1. VIP");
+            System.out.println("2. Platea");
+            System.out.println("3. General");
+            System.out.print("Elige una ubicación: ");
+            
+            int ubicacion = lector.nextInt();
+            lector.nextLine();
+            
+            String ubicacionTexto;
+            if (ubicacion == 1) {
+                ubicacionTexto = "VIP";
+            } else if (ubicacion == 2) {
+                ubicacionTexto = "Platea";
+            } else if (ubicacion == 3) {
+                ubicacionTexto = "General";
+            } else {
+                System.out.println("Ubicación no válida");
+                return;
+            }
+            
+            System.out.println("\nEntradas en ubicación " + ubicacionTexto + ":");
+            boolean encontrado = false;
+            
+            for (int i = 0; i < totalVentas; i++) {
+                if (ubicaciones[i].equals(ubicacionTexto)) {
+                    System.out.println("\nEntrada #" + numeros[i]);
+                    System.out.println("Tipo de cliente: " + tipoClientes[i]);
+                    System.out.println("Precio: $" + precios[i]);
+                    encontrado = true;
+                }
+            }
+            
+            if (!encontrado) {
+                System.out.println("No hay entradas en esa ubicación");
+            }
+        } 
+        else if (opcion == 3) {
+            // Buscar por tipo de cliente
+            System.out.println("\nTipos de cliente:");
+            System.out.println("1. Normal");
+            System.out.println("2. Estudiante");
+            System.out.println("3. Tercera Edad");
+            System.out.print("Elige un tipo: ");
+            
+            int tipo = lector.nextInt();
+            lector.nextLine();
+            
+            String tipoTexto;
+            if (tipo == 1) {
+                tipoTexto = "Normal";
+            } else if (tipo == 2) {
+                tipoTexto = "Estudiante";
+            } else if (tipo == 3) {
+                tipoTexto = "Tercera Edad";
+            } else {
+                System.out.println("Tipo no válido");
+                return;
+            }
+            
+            System.out.println("\nEntradas de tipo " + tipoTexto + ":");
+            boolean encontrado = false;
+            
+            for (int i = 0; i < totalVentas; i++) {
+                if (tipoClientes[i].startsWith(tipoTexto)) {
+                    System.out.println("\nEntrada #" + numeros[i]);
+                    System.out.println("Ubicación: " + ubicaciones[i]);
+                    System.out.println("Precio: $" + precios[i]);
+                    encontrado = true;
+                }
+            }
+            
+            if (!encontrado) {
+                System.out.println("No hay entradas de ese tipo");
+            }
+        } 
+        else {
+            System.out.println("Opción no válida");
+        }
+    }
+    
+    // Método para eliminar entradas
+    public void eliminarEntrada(Scanner lector) {
+        if (totalVentas == 0) {
+            System.out.println("No hay entradas para eliminar");
+            return;
+        }
+        
+        System.out.print("Ingresa el número de entrada a eliminar: ");
+        int numero = lector.nextInt();
+        lector.nextLine();
+        
+        int posicion = -1;
+        for (int i = 0; i < totalVentas; i++) {
+            if (numeros[i] == numero) {
+                posicion = i;
+                break;
+            }
+        }
+        
+        if (posicion == -1) {
+            System.out.println("No se encontró la entrada con ese número");
+            return;
+        }
+        
+        System.out.println("\nSe eliminará la siguiente entrada:");
+        System.out.println("Número: " + numeros[posicion]);
+        System.out.println("Ubicación: " + ubicaciones[posicion]);
+        System.out.println("Tipo de cliente: " + tipoClientes[posicion]);
+        System.out.println("Precio: $" + precios[posicion]);
+        
+        System.out.print("¿Confirmar eliminación? (1=Sí, 0=No): ");
+        int confirmar = lector.nextInt();
+        lector.nextLine();
+        
+        if (confirmar == 1) {
+            // Guardar el precio para restar de los ingresos
+            double precioARestar = precios[posicion];
+            
+            // Mover todas las entradas una posición hacia atrás
+            for (int i = posicion; i < totalVentas - 1; i++) {
+                numeros[i] = numeros[i + 1];
+                ubicaciones[i] = ubicaciones[i + 1];
+                tipoClientes[i] = tipoClientes[i + 1];
+                precios[i] = precios[i + 1];
+            }
+            
+            totalVentas--;
+            disponibles++;
+            dineroTotal -= precioARestar;
+            
+            System.out.println("Entrada eliminada con éxito");
+        } else {
+            System.out.println("Eliminación cancelada");
+        }
+    }
+    
+    // Método para mostrar estadísticas
+    public void mostrarEstadisticas() {
+        System.out.println("\nESTADÍSTICAS DEL TEATRO:");
+        System.out.println("Nombre: " + nombre);
+        System.out.println("Capacidad: " + capacidad);
+        System.out.println("Entradas vendidas: " + totalVentas);
+        System.out.println("Entradas disponibles: " + disponibles);
+        System.out.println("Ingresos totales: $" + dineroTotal);
+        System.out.println("Estudiantes atendidos: " + contadorEstudiantes);
+        
+        if (totalVentas > 0) {
+            System.out.println("\nLISTA DE ENTRADAS VENDIDAS:");
+            
+            for (int i = 0; i < totalVentas; i++) {
+                System.out.println("\nEntrada #" + numeros[i]);
+                System.out.println("Ubicación: " + ubicaciones[i]);
+                System.out.println("Tipo de cliente: " + tipoClientes[i]);
+                System.out.println("Precio: $" + precios[i]);
+            }
+        }
+    }
+}
